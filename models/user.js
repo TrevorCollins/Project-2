@@ -3,7 +3,7 @@ module.exports = function(sequelize, DataTypes) {
     //  Setting columns to database table to define our User
     name: { 
         type:DataTypes.STRING,
-        unique: true
+        unique: true,
         allowNull: false
     },
     picture: DataTypes.STRING,

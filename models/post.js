@@ -22,6 +22,15 @@ module.exports = function(sequelize, DataTypes) {
       }
     })
   };
+// Assigning Posts to have many threads
+Post.associate = models => {
+    Post.hasMany(models.Thread, {
+          onDelete: "CASCADE",
+          foreignKey: {
+            allowNull:false
+          }
+        });
+      };
 
   // Example: https://github.com/sequelize/express-example/blob/master/models/task.js
   return Post;
