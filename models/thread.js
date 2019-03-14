@@ -32,5 +32,5 @@ module.exports = function(sequelize, DataTypes) {
   };
 
   // Example: https://github.com/sequelize/express-example/blob/master/models/task.js
-  return Post;
+  return Thread;
 };

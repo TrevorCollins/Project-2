@@ -20,10 +20,10 @@ module.exports = function(sequelize, DataTypes) {
       foreignKey: {
         allowNull:false
       }
-    })
+    });
   };
-// Assigning Posts to have many threads
-Post.associate = models => {
+
+  Post.associate = models => {
     Post.hasMany(models.Thread, {
           onDelete: "CASCADE",
           foreignKey: {
