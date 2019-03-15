@@ -12,13 +12,6 @@ module.exports = function(app) {
     res.json("/members");
   });
 
-  // Get all examples
-  app.get("/api/examples", function(req, res) {
-    db.Example.findAll({}).then(function(dbExamples) {
-      res.json(dbExamples);
-    });
-  });
-
   app.get("/api/posts/:id", (req, res) => {
     db.Post.findAll({ where: { id: req.params.id }}).then(dbPosts => {
       res.json(dbPosts);
