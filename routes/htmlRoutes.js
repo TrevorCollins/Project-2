@@ -5,7 +5,7 @@ var path = require("path");
 // Requiring our custom middleware for checking if a user is logged in
 var isAuthenticated = require("../config/middleware/isAuthenticated");
 
-module.exports = function(app) {
+module.exports = (app) => {
   // Load index page
   app.get("/", function(req, res) {
        // If the user already has an account send them to the members page
@@ -47,7 +47,7 @@ module.exports = function(app) {
   });
 
   // Render 404 page for any unmatched routes
-  app.get("*", function(req, res) {
+  app.get("*", (req, res) => {
     res.render("404");
   });
 };

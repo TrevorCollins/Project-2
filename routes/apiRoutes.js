@@ -19,17 +19,21 @@ module.exports = function(app) {
     });
   });
 
-  // Create a new example
-  app.post("/api/examples", function(req, res) {
-    db.Example.create(req.body).then(function(dbExample) {
-      res.json(dbExample);
+  app.get("/api/posts/:id", (req, res) => {
+    db.Post.findAll({ where: { id: req.params.id }}).then(dbPosts => {
+      res.json(dbPosts);
     });
   });
 
-  // Delete an example by id
-  app.delete("/api/examples/:id", function(req, res) {
-    db.Example.destroy({ where: { id: req.params.id } }).then(function(dbExample) {
-      res.json(dbExample);
+  app.post("/api/posts", (req, res) => {
+    db.Post.create(req.body).then(dbPosts => {
+      res.json(dbPosts);
+    });
+  });
+
+  app.delete("/api/posts/:id", (req, res) => {
+    db.Post.destroy({ where: { id: req.params.id } }).then(dbPosts => {
+      res.json(dbPosts);
     });
   });
 
