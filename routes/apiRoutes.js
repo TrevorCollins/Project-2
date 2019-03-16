@@ -5,6 +5,7 @@ module.exports = function(app) {
   // Using the passport.authenticate middleware with our local strategy.
   // If the user has valid login credentials, send them to the members page.
   // Otherwise the user will be sent an error
+  
   app.post("/api/login", (req, res, next) => {
     passport.authenticate('local', (err, user, info) =>{
       if (info) {return res.send(info.message)};
@@ -15,6 +16,23 @@ module.exports = function(app) {
         return res.send('profile')
       });
     })(req, res, next);
+
+  app.get("/api/posts/:id", (req, res) => {
+    db.Post.findAll({ where: { id: req.params.id }}).then(dbPosts => {
+      res.json(dbPosts);
+    });
+  });
+
+  app.post("/api/posts", (req, res) => {
+    db.Post.create(req.body).then(dbPosts => {
+      res.json(dbPosts);
+    });
+  });
+
+  app.delete("/api/posts/:id", (req, res) => {
+    db.Post.destroy({ where: { id: req.params.id } }).then(dbPosts => {
+      res.json(dbPosts);
+    });
   });
 
   // Route for signing up a user. The user's password is automatically hashed and stored securely thanks to
