@@ -16,19 +16,17 @@ module.exports = function(sequelize, DataTypes) {
 
   // Adding a belongsTo association to Users here
   Thread.associate = models => {
-    models.Thread.belongsTo(models.User, {
+    Thread.belongsTo(models.User, {
       foreignKey: {
         allowNull:false
       }
-    })
-  };
-  // Adding a belongsTo association to Post here
-  Thread.associate = models => {
-    models.Thread.belongsTo(models.Post, {
+    });
+
+    Thread.belongsTo(models.Post, {
       foreignKey: {
         allowNull:false
       }
-    })
+    });
   };
 
   // Example: https://github.com/sequelize/express-example/blob/master/models/task.js

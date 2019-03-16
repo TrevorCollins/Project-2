@@ -1,4 +1,4 @@
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   var Post = sequelize.define("Post", {
     title: {
       type: DataTypes.STRING,
@@ -21,21 +21,19 @@ module.exports = function(sequelize, DataTypes) {
 
   // Adding a belongsTo association to Users here
   Post.associate = models => {
-    models.Post.belongsTo(models.User, {
+    Post.belongsTo(models.User, {
       foreignKey: {
-        allowNull:false
+        allowNull: false
+      }
+    });
+
+    Post.hasMany(models.Thread, {
+      onDelete: "CASCADE",
+      foreignKey: {
+        allowNull: false
       }
     });
   };
-
-  Post.associate = models => {
-    Post.hasMany(models.Thread, {
-          onDelete: "CASCADE",
-          foreignKey: {
-            allowNull:false
-          }
-        });
-      };
 
   // Example: https://github.com/sequelize/express-example/blob/master/models/task.js
   return Post;

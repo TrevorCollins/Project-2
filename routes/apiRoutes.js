@@ -1,34 +1,61 @@
 var db = require("../models");
 var passport = require("../config/passport.js");
 
-module.exports = function(app) {
+module.exports = function (app) {
   // Using the passport.authenticate middleware with our local strategy.
   // If the user has valid login credentials, send them to the members page.
   // Otherwise the user will be sent an error
-  
+
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate('local', (err, user, info) =>{
-      if (info) {return res.send(info.message)};
-      if (err) {return next(err);};
-      if (!user) {return res.redirect('/login'); }
+    passport.authenticate('local', (err, user, info) => {
+      if (info) { return res.send(info.message) };
+      if (err) { return next(err); };
+      if (!user) { return res.redirect('/login'); }
       req.login(user, (err) => {
-        if (err) {return next(err)}
+        if (err) { return next(err) }
         return res.send('profile')
       });
-    })(req, res, next);
+    });
+  });
 
+  // Get posts
+  app.get("/api/posts", (req, res) => {
+    console.log(req.body);
+    db.Post.findAll({
+      offset: req.body.offset,
+      limit: 10,
+      order: [
+        ["updatedAt", "DESC"]
+      ]
+    }).then(dbPosts => {
+      res.json(dbPosts);
+    });
+  });
+
+  // Get one post with threads
   app.get("/api/posts/:id", (req, res) => {
-    db.Post.findAll({ where: { id: req.params.id }}).then(dbPosts => {
+    db.Post.findOne({
+      where: { AuthorId: req.params.id },
+      include: [
+        { 
+          model: db.Thread,
+          where: {
+            id: ""
+          }
+        },
+        {
+          model: db.User,
+          where: {
+            id: AuthorId
+          }
+        }
+      ]
+    }).then(dbPosts => {
       res.json(dbPosts);
     });
   });
 
-  app.post("/api/posts", (req, res) => {
-    db.Post.create(req.body).then(dbPosts => {
-      res.json(dbPosts);
-    });
-  });
-
+  // Delete post
   app.delete("/api/posts/:id", (req, res) => {
     db.Post.destroy({ where: { id: req.params.id } }).then(dbPosts => {
       res.json(dbPosts);
@@ -54,13 +81,13 @@ module.exports = function(app) {
   });
 
   // Route for logging user out
-  app.get("/logout", (req, res) => {
+  app.get("/api/logout", (req, res) => {
     req.logout();
     res.redirect("/");
   });
 
   // Route for getting some data about our user to be used client side
-  app.get("/api/user_data", (req, res)=> {
+  app.get("/api/user_data", (req, res) => {
     if (!req.user) {
       // The user is not logged in, send back an empty object
       res.json({});
@@ -77,15 +104,15 @@ module.exports = function(app) {
 
   // Create a new Post
   app.post("/api/post", (req, res) => {
-      if (!req.user){
-        // prevents user from posting if not logged in
-        // sending back a placeholder, it should prompt user to sign in
-        res.json({})
-      }
-      db.Post.create(req.body).then((dbPost) => {
-        res.json(dbPost);
-      });
+    if (!req.user) {
+      // prevents user from posting if not logged in
+      // sending back a placeholder, it should prompt user to sign in
+      res.json({})
+    }
+    db.Post.create(req.body).then((dbPost) => {
+      res.json(dbPost);
     });
+  });
 
   // Route for retrieving data for our forum posts
   app.get("/api/post_data", (req, res) => {
@@ -93,5 +120,4 @@ module.exports = function(app) {
       res.json(dbPosts);
     });
   });
-
 };
