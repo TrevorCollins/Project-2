@@ -1,25 +1,39 @@
 require("dotenv").config();
-var express = require("express");
-var session = require("express-session");
-var exphbs = require("express-handlebars");
-var passport = require("./config/passport");
+const express = require("express");
+const uuid = require('uuid/v4')
+const session = require("express-session");
+const exphbs = require("express-handlebars");
+const passport = require("./config/passport");
+const bodyParser = require('body-parser');
+
 // sets up port and models
-var PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 var db = require("./models");
 
-var app = express();
+const app = express();
 
 
 // Middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // We need to use sessions to keep track of our user's login status
 app.use(
-  session({ secret: "keyboard cat", resave: true, saveUninitialized: true })
+  session({
+    genid: (req) => {
+      console.log(`In the session middleware with sessionID: ${req.sessionID}`);
+      // creating a unique string with uuid for a sessionID
+      return uuid()
+    },
+    
+     secret: "keyboard cat",
+     resave: true, 
+     saveUninitialized: true })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
+
 // Handlebars
 app.engine(
   "handlebars",
