@@ -5,15 +5,17 @@ const session = require("express-session");
 const exphbs = require("express-handlebars");
 const passport = require("./config/passport");
 const bodyParser = require('body-parser');
+const path = require('path');
 
 // sets up port and models
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 var db = require("./models");
 
 const app = express();
 
 
 // Middleware
+app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -45,7 +47,16 @@ app.set("view engine", "handlebars");
 
 // Routes
 require("./routes/apiRoutes")(app);
-require("./routes/htmlRoutes")(app);
+
+app.get('/login', (req, res) => {
+  // no authintication needed
+  res.sendFile(path.join(__dirname + '/public/index.html'));
+});
+
+app.get('*', (req, res) => {
+  // need to authinticate
+  res.sendFile(path.join(__dirname + '/public/index.html'));
+});
 
 var syncOptions = { force: false };
 
