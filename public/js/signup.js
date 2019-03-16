@@ -32,10 +32,12 @@ $(document).ready(function() {
       name: name,
       email: email,
       password: password
-    }).then(function(data) {
-      window.location.replace(data);
-      // If there's an error, handle it by throwing up a bootstrap alert
-    }).catch(handleLoginErr);
+    })
+      .then(function(data) {
+        window.location.replace(data);
+        // If there's an error, handle it by throwing up a bootstrap alert
+      })
+      .catch(handleLoginErr);
   }
 
   function handleLoginErr(err) {

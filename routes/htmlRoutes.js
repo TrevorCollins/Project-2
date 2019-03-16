@@ -1,41 +1,48 @@
 var db = require("../models");
-// Requiring path to so we can use relative routes to our HTML files
-var path = require("path");
 
 // Requiring our custom middleware for checking if a user is logged in
-var isAuthenticated = require("../config/middleware/isAuthenticated");
+// var isAuthenticated = require("../config/middleware/isAuthenticated");
 
-module.exports = (app) => {
-  // Load index page
-  app.get("/", function(req, res) {
-       // If the user already has an account send them to the members page
-       if (req.user) {
-        res.redirect("/members");
-      }
-      res.sendFile(path.join(__dirname, "../public/signup.html"));
-
-    // db.Example.findAll({}).then(function(dbExamples) {
-    //   res.render("index", {
-    //     msg: "Welcome!",
-    //     examples: dbExamples
-    //     });
-    // });
+module.exports = function(app) {
+  // Load serving signup page
+  app.get("/signup", function(req, res) {
+    // If the user already has an account send them to the profile page
+    if (req.isAuthenticated()) {
+      res.redirect("/profile");
+    } else{
+    res.render("signup");}
   });
 
-  app.get("/login", function(req, res) {
-    // If the user already has an account send them to the members page
-    if (req.user) {
-      res.redirect("/members");
+  app.get("/login", (req, res) => {
+    res.render("login");
+  });
+
+ 
+  app.get("/profile", (req, res) => {
+    if(req.isAuthenticated()){
+      res.render("profile");
+    } else {
+      res.redirect('/login')
     }
-    res.sendFile(path.join(__dirname, "../public/login.html"));
   });
 
-    // Here we've add our isAuthenticated middleware to this route.
-  // If a user who is not logged in tries to access this route they will be redirected to the signup page
-  app.get("/members", isAuthenticated, function(req, res) {
-    res.sendFile(path.join(__dirname, "../public/members.html"));
+  app.get("/", (req, res) => {
+    if(req.isAuthenticated()){
+      console.log(`We are signed in at the home page.`)
+    }
+    res.render("index");
   });
 
+  // 
+  app.get("/forum", (req, res) => {
+    db.Post.findAll({}).then( (dbResults) =>{
+      res.render("forum", {
+        post: dbResults
+      });
+    });
+    
+  });
+ 
   // Render 404 page for any unmatched routes
   app.get("*", (req, res) => {
     res.render("404");
