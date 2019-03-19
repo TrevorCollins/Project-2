@@ -16,7 +16,6 @@ module.exports = function(app) {
   app.get("/login", (req, res) => {
     res.render("login");
   });
-
  
   app.get("/profile", (req, res) => {
     if(req.isAuthenticated()){
