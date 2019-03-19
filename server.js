@@ -27,10 +27,11 @@ app.use(
       // creating a unique string with uuid for a sessionID
       return uuid()
     },
-    
-     secret: "keyboard cat",
-     resave: true, 
-     saveUninitialized: true })
+
+    secret: "keyboard cat",
+    resave: true,
+    saveUninitialized: true
+  })
 );
 
 app.use(passport.initialize());
@@ -67,13 +68,15 @@ if (process.env.NODE_ENV === "test") {
 }
 
 // Starting the server, syncing our models ------------------------------------/
-db.sequelize.sync(syncOptions).then(function() {
-  app.listen(PORT, function() {
+db.sequelize.sync(syncOptions).then(function () {
+  app.listen(PORT, function () {
     console.log(
       "==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.",
       PORT,
       PORT
     );
+
+    require("./db/data");
   });
 });
 
