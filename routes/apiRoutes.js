@@ -1,6 +1,9 @@
 var db = require("../models");
 var passport = require("../config/passport.js");
 
+var Sequelize = require("sequelize");
+var Op = Sequelize.Op;
+
 module.exports = function (app) {
   // Using the passport.authenticate middleware with our local strategy.
   // If the user has valid login credentials, send them to the members page.
@@ -19,13 +22,20 @@ module.exports = function (app) {
   });
 
   // Get posts
-  app.get("/api/posts", (req, res) => {
-    console.log(req.body);
+  app.get("/api/posts/page/:offset", (req, res) => {
     db.Post.findAll({
-      offset: req.body.offset,
+      offset: parseInt(req.params.offset) * 10,
       limit: 10,
       order: [
         ["updatedAt", "DESC"]
+      ],
+      include: [
+        {
+          model: db.User,
+          attributes: [
+            "id", "name", "picture"
+          ]
+        },
       ]
     }).then(dbPosts => {
       res.json(dbPosts);
@@ -35,19 +45,73 @@ module.exports = function (app) {
   // Get one post with threads
   app.get("/api/posts/:id", (req, res) => {
     db.Post.findOne({
-      where: { AuthorId: req.params.id },
+      where: {
+        id: req.params.id
+      },
       include: [
-        { 
-          model: db.Thread,
-          where: {
-            id: ""
-          }
-        },
         {
           model: db.User,
-          where: {
-            id: AuthorId
-          }
+          attributes: [
+            "id", "name", "picture"
+          ]
+        },
+        {
+          model: db.Thread,
+          include: [
+            {
+              model: db.User,
+              attributes: [
+                "id", "name", "picture"
+              ]
+            }
+          ]
+        }
+      ]
+    }).then(dbPosts => {
+      res.json(dbPosts);
+    });
+  });
+
+  // Search posts by keywords
+  app.get("/api/posts/search/:query", (req, res) => {
+    let query = req.params.query;
+    query = query.split("+").join("%");
+    query = `%${query}%`
+
+    console.log(query);
+
+    db.Post.findAll({
+      where: {
+        [Op.or]: [
+          { "title": { [Op.like]: query } },
+          { "body": { [Op.like]: query } }
+        ]
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: [
+            "id", "name", "picture"
+          ]
+        }
+      ]
+    }).then(dbPosts => {
+      res.json(dbPosts);
+    });
+  });
+
+  // Search posts by category
+  app.get("/api/posts/category/:category", (req, res) => {
+    db.Post.findAll({
+      where: {
+        typeOf: req.params.category
+      },
+      include: [
+        {
+          model: db.User,
+          attributes: [
+            "id", "name", "picture"
+          ]
         }
       ]
     }).then(dbPosts => {
