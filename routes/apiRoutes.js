@@ -28,6 +28,14 @@ module.exports = function (app) {
       limit: 10,
       order: [
         ["updatedAt", "DESC"]
+      ],
+      include: [
+        {
+          model: db.User,
+          attributes: [
+            "id", "name", "picture"
+          ]
+        },
       ]
     }).then(dbPosts => {
       res.json(dbPosts);
@@ -37,15 +45,26 @@ module.exports = function (app) {
   // Get one post with threads
   app.get("/api/posts/:id", (req, res) => {
     db.Post.findOne({
-      where: { 
-        id: req.params.id 
+      where: {
+        id: req.params.id
       },
       include: [
-        { 
-          model: db.Thread
+        {
+          model: db.User,
+          attributes: [
+            "id", "name", "picture"
+          ]
         },
         {
-          model: db.User
+          model: db.Thread,
+          include: [
+            {
+              model: db.User,
+              attributes: [
+                "id", "name", "picture"
+              ]
+            }
+          ]
         }
       ]
     }).then(dbPosts => {
@@ -55,8 +74,6 @@ module.exports = function (app) {
 
   // Search posts by keywords
   app.get("/api/posts/search/:query", (req, res) => {
-    // let arr = [];
-    // arr = req.params.query.split("+");
     let query = req.params.query;
     query = query.split("+").join("%");
     query = `%${query}%`
@@ -64,19 +81,18 @@ module.exports = function (app) {
     console.log(query);
 
     db.Post.findAll({
-      where: { 
-        // title: { [Op.like]: { [Op.any]: arr } }
+      where: {
         [Op.or]: [
           { "title": { [Op.like]: query } },
           { "body": { [Op.like]: query } }
         ]
       },
       include: [
-        { 
-          model: db.Thread
-        },
         {
-          model: db.User
+          model: db.User,
+          attributes: [
+            "id", "name", "picture"
+          ]
         }
       ]
     }).then(dbPosts => {
@@ -87,15 +103,15 @@ module.exports = function (app) {
   // Search posts by category
   app.get("/api/posts/category/:category", (req, res) => {
     db.Post.findAll({
-      where: { 
+      where: {
         typeOf: req.params.category
       },
       include: [
-        { 
-          model: db.Thread
-        },
         {
-          model: db.User
+          model: db.User,
+          attributes: [
+            "id", "name", "picture"
+          ]
         }
       ]
     }).then(dbPosts => {
