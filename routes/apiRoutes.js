@@ -178,6 +178,18 @@ module.exports = function (app) {
     });
   });
 
+  // Create new comment
+  app.post("/api/comment", (req, res) => {
+    if (!req.user) {
+      // prevents user from posting if not logged in
+      // sending back a placeholder, it should prompt user to sign in
+      res.json({})
+    }
+    db.Thread.create(req.body).then((dbPost) => {
+      res.json(dbPost);
+    });
+  });
+
   // Route for retrieving data for our forum posts
   app.get("/api/post_data", (req, res) => {
     db.Post.findAll({}).then((dbPosts) => {
