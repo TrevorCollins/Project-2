@@ -8,14 +8,13 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 // sets up port and models
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 var db = require("./models");
-
+const publicPath = path.join(__dirname, "/views")
 const app = express();
 
-
+app.use('/', express.static(publicPath));
 // Middleware
-app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -47,16 +46,7 @@ app.set("view engine", "handlebars");
 
 // Routes
 require("./routes/apiRoutes")(app);
-
-app.get('/login', (req, res) => {
-  // no authintication needed
-  res.sendFile(path.join(__dirname + '/public/index.html'));
-});
-
-app.get('*', (req, res) => {
-  // need to authinticate
-  res.sendFile(path.join(__dirname + '/public/index.html'));
-});
+require("./routes/htmlRoutes")(app);
 
 var syncOptions = { force: false };
 

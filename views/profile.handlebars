@@ -1,0 +1,169 @@
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: #182035 !important;">
+        <div class="d-flex flex-grow-1">
+            <span class="w-100 d-lg-none d-block"><!-- hidden spacer to center brand on mobile --></span>
+            <a class="navbar-brand" href="/">
+                Ask an Engineer
+            </a>
+            <div class="w-100 text-right">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar7">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar7">
+            <ul class="navbar-nav ml-auto flex-nowrap">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/forum" class="nav-link">Forum</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link">Log Out</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+<header class="d-header clearfix">
+  <div class="wrap">
+    <div class="contents clearfix">
+      <div class="title">
+        <h4>Welcome <span class="profile-name"></span></h4>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<div class="container">
+<br>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table" id="postManager">
+                <thead>
+                    <tr>
+                        <th># of Posts</th>
+                        <th>Update Post</th>
+                        <th>Delete Post</th>
+                    </tr>
+                </thead>
+            </table>
+      {{#each post}}
+      <div class="card" data-post={{id}} data-userId={{UserId}}>
+        <div class="card-header"></div>
+        <div class="card-body forum-container user-posts">
+          
+          <h5 class="card-title">Post by:<span> {{UserId}}</span> </h5>
+          
+          <div class="postId">
+          <p><strong>ID</strong>:<span> {{id}}</span></p>
+          </div>
+          <div class="postTitle">
+          <p><strong>Title</strong>:<span> {{title}}</span></p>
+          </div>
+          <div class="postBody">
+          <p><strong>Body:</strong><span> {{body}}</span></p>
+          </div>
+          <div class="postType">
+          <p><strong>Category:</strong><span> {{typeOf}}</span></p>
+          </div>
+            <button type="button" class="btn btn-light commentBtn" data-toggle="modal" data-target="#threadModal">
+              View Threads
+            </button>
+        </div>
+      </div>
+      {{#each thread}}
+          <div class="card thread" data-post={{id}} data-userId={{UserId}}>
+            <div class="card-header"></div>
+            <div class="card-body forum-container">
+              <h5 class="card-title">Post by:<span>{{User.name}}</span> </h5>
+          <div class="postId">
+          <p><strong>ID</strong>:<span> {{id}}</span></p>
+          </div>
+          <div class="postTitle">
+          <p><strong>Title</strong>:<span> {{title}}</span></p>
+          </div>
+          <div class="postBody">
+          <p><strong>Body:</strong><span> {{body}}</span></p>
+          </div>
+          {{/each}}
+      {{/each}}
+        </div>
+    </div>
+</div>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>  
+  <script type="text/javascript">
+$(document).ready(function() {
+  // This file just does a GET request to figure out which user is logged in
+  // and updates the HTML on the page
+  let userId;
+
+  $.get("/api/user_data").then(function(data) {
+    userId = data.id;
+    $(".profile-name").text(data.name);
+  });
+  $.get("/api/userPosts" + userId).then(function(data){
+ 
+  })
+
+
+  let titleInput = $("#title");
+  let bodyInput = $("#body");
+  let typeOfInput = $("#typeOf");
+
+
+
+
+  function deletePost(id){
+    $.ajax({
+      method: "DELETE",
+      url: "/api/posts/" + id
+    }).then(function() {
+    window.location.href = "/profile"
+    })
+  };
+  function updatePost(post){
+    $.ajax({
+      method: "PUT",
+      url: "/api/posts",
+      data: post
+    }).then(function() {
+      window.location.href = "/profile";
+    })
+  };
+
+
+  $("#post").on("submit", handleFormSubmit);
+
+  function handleFormSubmit(event){
+    event.preventDefault();
+     // Wont submit the post if we are missing a body, title, or author
+    if (!titleInput.val().trim() || !bodyInput.val().trim() || !userId) {
+      return;
+    }
+    
+   let newPost = {
+      title: titleInput
+        .val()
+        .trim(),
+      body: bodyInput
+        .val()
+        .trim(),
+      typeOf: typeOfInput.val(),
+      UserId: userId
+    };
+    
+    updatePost(newPost);
+  };
+
+  function submitPost(post){
+    $.post("/api/post", post, function(){
+      window.location.href = "/profile";
+    });
+  };
+
+});
+</script>
