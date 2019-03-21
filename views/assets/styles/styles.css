@@ -1,0 +1,105 @@
+.list-group-item {
+  line-height: 2.5;
+}
+/* styling for home page header */
+.header{
+  position: relative;
+  display: block;
+}
+.hdr-wrap{
+  position: relative;
+}
+.title-wrap{
+  display: block;
+  height: 622px;
+  position: relative;
+  width: 100%;
+  z-index: 0;
+}
+img{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 0;
+  width: 100%;
+  height: 622px;
+
+}
+.content{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 2;
+}
+.text-content{
+  height: 100%;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+.caption-fade-in{
+  position: absolute;
+  top: 25%;
+  right: 0;
+  bottom: 55px;
+  left:0;
+  visibility: visible;
+  opacity: 1;
+  text-align: center;
+  font-size: 24px;
+  line-height: 1;
+  color: #fff;
+
+}
+.caption-fade-in h1{
+  font-weight: 900;
+  font-size: 96px;
+  line-height: 1;
+}
+/* styling for forum page */
+.dropdown, .newPost{
+  float:right;
+}
+.title{
+  width: 50%;
+  display: inline-block;
+}
+.d-header{
+    align-items: center;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
+    padding: 5px 0 5px 0;
+}
+.wrap{
+  width: 1140px;
+  margin: auto;
+}
+.btn-light{
+  background-color: #182035;
+  color: #fff;
+  border: 0px;
+}
+.container{
+  padding: 0;
+}
+.table th{
+  border-top: 0px;
+}
+form{
+  width: 660px;
+  margin: auto;
+}
+.postDate, .postAuthor{
+  float: left;
+  padding-right: 10px;
+}
+.commentBtn{
+float: right;
+}

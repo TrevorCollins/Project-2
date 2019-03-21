@@ -1,0 +1,168 @@
+<div id="thread">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: #182035 !important;">
+        <div class="d-flex flex-grow-1">
+            <span class="w-100 d-lg-none d-block"><!-- hidden spacer to center brand on mobile --></span>
+            <a class="navbar-brand" href="/">
+                Ask an Engineer
+            </a>
+            <div class="w-100 text-right">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar7">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar7">
+            <ul class="navbar-nav ml-auto flex-nowrap">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/forum" class="nav-link">Forum</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login" class="nav-link">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+<header class="d-header clearfix">
+  <div class="wrap">
+    <div class="container">
+    <div class="contents clearfix">
+      <div class="title">
+        <h4>Welcome <span class="profile-name"></span></h4>
+      </div>
+        <div class="dropdown">
+          <div class="newPost">
+            <button class="btn btn-light" id="newCommentButton">New Comment</button>
+          </div>
+        </div>
+    </div>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <br>
+  <div class="row">
+      <div class="col-md-3">
+
+      </div>
+        <div class="col-md-9" id="newCommentForm" style="display:none">
+                <form id="comment">
+                <div class="form-group">
+                  <label for="title">Title:</label>
+                  <input placeholder="Comment Title" type="text" class="form-control" id="title">
+                  <br />
+                  <label for="body">Body:</label>
+                  <textarea placeholder="Place your comment here." class="form-control" rows="8" id="body"></textarea>
+                  <br />
+                  <button type="submit" class="btn btn-light submit">Create comment</button>
+                </div>
+              </form>
+        </div>
+
+
+
+
+    <div class="col-md-9" id="postSection">
+  
+   
+      <div class="card post" data-postId="{{post.dataValues.id}}" data-userId="{{post.UserId}}">
+        <div class="card-header"></div>
+        <div class="card-body forum-container user-posts">
+          
+          <h5 class="card-title">Post by:<span> {{post.User.name}}</span> </h5>
+          
+          <div class="postId">
+          <p><strong>ID</strong>:<span> {{post.dataValues.id}}</span></p>
+          </div>
+          <div class="postTitle">
+          <p><strong>Title</strong>:<span> {{post.dataValues.title}}</span></p>
+          </div>
+          <div class="postBody">
+          <p><strong>Body:</strong><span> {{post.body}}</span></p>
+          </div>
+          <div class="postType">
+          <p><strong>Category:</strong><span> {{post.typeOf}}</span></p>
+          </div>
+        </div>
+      </div>
+      
+        {{#each post.Threads}}
+          <div class="card thread" data-post={{id}} data-userId={{UserId}}>
+            <div class="card-header"></div>
+            <div class="card-body forum-container">
+              <h5 class="card-title">Post by:<span>{{User.name}}</span> </h5>
+          <div class="postId">
+          <p><strong>ID</strong>:<span> {{id}}</span></p>
+          </div>
+          <div class="postTitle">
+          <p><strong>Title</strong>:<span> {{title}}</span></p>
+          </div>
+          <div class="postBody">
+          <p><strong>Body:</strong><span> {{body}}</span></p>
+          </div>
+        {{/each}}
+ 
+   
+ 
+    </div>
+
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+let UserId;
+let postId = $(".post").data("postid");
+let titleInput = $("#title");
+let bodyInput = $("#body");
+console.log(postId);
+
+$.get("/api/user_data").then(function(data) {
+    userId = data.id
+    console.log(data.name)
+    $(".profile-name").text(data.name);
+});
+
+$("#newCommentButton").on("click", function(){
+    $("#newCommentForm").toggle();
+})
+
+    $("#comment").on("submit", handleFormSubmit);
+
+  function handleFormSubmit(event){
+    event.preventDefault();
+     // Wont submit the post if we are missing a body, title, or author
+    if (!titleInput.val().trim() || !bodyInput.val().trim() || !userId) {
+      return;
+    }
+    
+   let newComment = {
+      title: titleInput
+        .val()
+        .trim(),
+      body: bodyInput
+        .val()
+        .trim(),
+      UserId: userId,
+      PostId: postId
+    };
+    console.log(newComment)
+    submitComment(newComment);
+  };
+
+  function submitComment(comment){
+    $.post("/api/comment", comment, function(){
+     console.log("thread submitted")
+     window.location.href = "/thread/"+ postId
+    });
+  };
+});
+
+</script>
+

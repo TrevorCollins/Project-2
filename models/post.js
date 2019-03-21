@@ -1,4 +1,4 @@
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define("Post", {
     title: {
       type: DataTypes.STRING,
@@ -23,15 +23,14 @@ module.exports = function (sequelize, DataTypes) {
   Post.associate = models => {
     Post.belongsTo(models.User, {
       foreignKey: {
-        allowNull: false
+        allowNull:false
       }
     });
-
     Post.hasMany(models.Thread, {
-      onDelete: "CASCADE",
-      foreignKey: {
-        allowNull: false
-      }
+          onDelete: "CASCADE",
+          foreignKey: {
+            allowNull:false
+          }
     });
   };
 

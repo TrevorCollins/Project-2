@@ -1,0 +1,112 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background: #182035 !important;">
+        <div class="d-flex flex-grow-1">
+            <span class="w-100 d-lg-none d-block"><!-- hidden spacer to center brand on mobile --></span>
+            <a class="navbar-brand" href="/">
+                Ask an Engineer
+            </a>
+            <div class="w-100 text-right">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar7">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse flex-grow-1 text-right" id="myNavbar7">
+            <ul class="navbar-nav ml-auto flex-nowrap">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/forum" class="nav-link">Forum</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" class="nav-link">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/login" class="nav-link">Login</a>
+                </li>
+            </ul>
+        </div>
+</nav>
+<br>
+<div id="signUp">
+  
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <h2>Sign Up</h2>
+        <form class="signup">
+        <div class="form-group">
+          <label for="emailInput">Email address</label>
+          <input type="email" class="form-control" id="email-input" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <label for="usernameInput">Username</label>
+          <input type="name" class="form-control" id="name-input" placeholder="Create username">
+        </div>
+        <div class="form-group">
+          <label for="passwordInput">Password</label>
+          <input type="password" class="form-control" id="password-input" placeholder="Create password">
+        </div>
+        <div style="display: none" id="alert" class="alert alert-danger" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Error:</span> <span class="msg"></span>
+        </div>
+        <p>Or Login <a href="/login">Here</a></p>
+        <button type="submit" class="btn btn-light">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+  // Getting references to our form and input
+  let signUpForm = $("form.signup");
+  let nameInput = $("input#name-input");
+  let emailInput = $("input#email-input");
+  let passwordInput = $("input#password-input");
+
+  // When the signup button is clicked, we validate the email and password are not blank
+  signUpForm.on("submit", function(event) {
+    event.preventDefault();
+    let userData = {
+      name: nameInput.val().trim(),
+      email: emailInput.val().trim(),
+      password: passwordInput.val().trim()
+    };
+
+    if (!userData.email || !userData.password) {
+      return;
+    }
+    // If we have an name, email and password, run the signUpUser function
+    signUpUser(userData.name, userData.email, userData.password);
+    // clearing out form
+    nameInput.val("");
+    emailInput.val("");
+    passwordInput.val("");
+  });
+
+  // Does a post to the signup route. If successful, we are redirected to the members page
+  // Otherwise we log any errors
+  function signUpUser(name, email, password) {
+    $.post("/api/signup", {
+      name: name,
+      email: email,
+      password: password
+    })
+      .then( function(data) {
+        window.location.replace(data);
+        // If there's an error, handle it by throwing up a bootstrap alert
+      })
+      .catch(handleLoginErr);
+  }
+
+  function handleLoginErr(err) {
+    $("#alert .msg").text(err.responseJSON);
+    $("#alert").fadeIn(500);
+  }
+});
+</script>
+
